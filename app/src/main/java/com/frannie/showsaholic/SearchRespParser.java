@@ -7,11 +7,13 @@ package com.frannie.showsaholic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
 import android.util.Xml;
 public class SearchRespParser {
     // We don't use namespaces
@@ -62,10 +64,20 @@ public class SearchRespParser {
                     item.seriesURL=link;
                     item.showID=showid;
                     item.seasonsSearchItem=season;
+                    Log.v("SearchItem", item.toString());
                     items.add(item);
+                    showid=title=link=date=season=null;
                 }
             }
-            return (SearchItem[])items.toArray();
+            int numElementsRetrieved= items.size();
+            Log.v("SearchItems:", ""+numElementsRetrieved);
+            //Filling the response array
+            SearchItem[] res= new SearchItem[numElementsRetrieved];
+            Iterator<SearchItem> it= items.iterator();
+            for(int i=0; i<numElementsRetrieved && it.hasNext();i++){
+                res[i]=it.next();
+            }
+            return res;
         }
 
         private String readLink(XmlPullParser parser) throws XmlPullParserException, IOException {

@@ -37,6 +37,15 @@ public class SearchItem implements Parcelable{
     }
 
     @Override
+    public String toString(){
+        return "Name :"+nameSearchItem+
+                " date : "+ dateSearchItem+
+                " seasons: "+seasonsSearchItem+
+                " ShowId : "+ showID+
+                " link: "+ seriesURL +"\n";
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

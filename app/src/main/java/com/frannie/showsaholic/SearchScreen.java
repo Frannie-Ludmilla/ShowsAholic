@@ -1,7 +1,10 @@
 package com.frannie.showsaholic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Xml;
@@ -17,23 +20,29 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.frannie.showsaholic.SearchRespParser;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +55,16 @@ public class SearchScreen extends Activity {
     //protected String[] prova = new String[]{"Post 1", "Post 2", "Post 3", "Post 4", "Post 5", "Post 6"};
     private SearchItem[] listData;
     protected String URL_SEARCH= "http://services.tvrage.com/feeds/search.php?show=";
+    protected URL myUrl;
     String searchedShow;
+    ProgressBar progress;
+    ListView listView;
+    Context ctx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // String search = savedInstanceState.getIntent();
+        setContentView(R.layout.searchlist);
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -62,69 +75,22 @@ public class SearchScreen extends Activity {
         } else {
             searchedShow= (String) savedInstanceState.getSerializable("selectedSeries");
         }
+        progress=(ProgressBar)this.findViewById(R.id.progressbar_loading_search);
+        listView = (ListView)this.findViewById(R.id.searchListView);
+        ctx=this;
 
         try {
-            URL url=new URL(URL_SEARCH + searchedShow);
-
-            HTTPRequest myhttp = new HTTPRequest(url);
-            myhttp.execute();
+            myUrl=new URL(URL_SEARCH + searchedShow);
+            new HttpGetTask().execute();
         }
         catch (Exception e){
             Log.e("Error:",e.toString());
         }
-
-
-       /* new HTTPHandler() {
-            @Override
-            public HttpUriRequest getHttpRequestMethod() {
-                Log.v("Search URL",URL_SEARCH+searchedShow);
-                return new HttpGet(URL_SEARCH+searchedShow);
-
-                // return new HttpPost(url)
-            }
-
-            @Override
-            public void onResponse(String result) {
-                Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
-                InputStream stream = new ByteArrayInputStream(result.getBytes());
-                try{
-                    listData = new SearchRespParser().parse(stream);
-                }
-                catch(XmlPullParserException e){
-                    //Data cannot be parsed
-                    Log.e("Search Parser: ","Stream cannot be parsed");
-                    Log.e("Stream is", result);
-                }
-                catch(IOException e){
-
-                }
-            }
-
-        }.execute();
-*/
     }
 
-    @Override
+    //May be deleted
     public boolean onCreateOptionsMenu(Menu menu) {
         //generateDummyData();
-        setContentView(R.layout.searchlist);
-        ListView listView = (ListView) this.findViewById(R.id.searchListView);
-        if(listData==null) Log.e("listdata", "null");
-        SearchAdapter itemAdapter = new SearchAdapter(this, R.layout.searchitem, listData);
-        AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view,
-                                    int position, long id) {
-                SearchItem searchedIt = (SearchItem) adapter.getItemAtPosition(position);
-                Bundle data = new Bundle();
-                data.putParcelable("selectedShow", searchedIt);
-                Intent in = new Intent(SearchScreen.this, SeasonsScreen.class);
-                in.putExtras(data);
-                startActivity(in);
-            }
-        };
-        listView.setAdapter(itemAdapter);
-        listView.setOnItemClickListener(clickListener);
         return true;
     }
 
@@ -143,10 +109,89 @@ public class SearchScreen extends Activity {
     }
 
 
-    /**
-     * @TODO: Trigger other activity
-     * Intent in = new Intent(MainActivity.this, SearchScreen.class);
-     * in.putExtras(data);
-     * startActivity(in);
-     */
+    private class HttpGetTask extends AsyncTask<Void, Void, String> {
+
+        HttpURLConnection urlConnection;
+
+        @Override
+        protected void onPreExecute() {
+            progress.setVisibility(View.VISIBLE);
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+                urlConnection = (HttpURLConnection)myUrl.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                return readStream(in);
+            }catch(Exception e){
+                Log.e("DoInBackgroud", e.toString());
+            }finally{
+                urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        private String readStream(InputStream in) {
+            BufferedReader reader = null;
+            StringBuffer data = new StringBuffer("");
+            try {
+                reader = new BufferedReader(new InputStreamReader(in));
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    data.append(line);
+                }
+            } catch (IOException e) {
+                Log.e("Error in readStream", "IOException");
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return data.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //Retrieve the SearchItem[] from the XMLParser and the result
+            Log.v("Result_PE:",result);
+            SearchRespParser myXMLparser= new SearchRespParser();
+            InputStream in= new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+
+            try {
+                listData = (SearchItem[])myXMLparser.parse(in);
+            }catch (Exception e){
+                Log.e("onPostExceuteXMLParser", e.toString());
+                if(listData==null){
+                    Log.e("listdata", "null");
+                    generateDummyData();
+                }
+            }
+            //Inflate and set the elements of the views: ARRAYADAPTER
+            if(listData==null) Log.e("listdata", "null");
+            SearchAdapter itemAdapter = new SearchAdapter(ctx, R.layout.searchitem, listData);
+            AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view,
+                                        int position, long id) {
+                    SearchItem searchedIt = (SearchItem) adapter.getItemAtPosition(position);
+                    Bundle data = new Bundle();
+                    data.putParcelable("selectedShow", searchedIt);
+                    Intent in = new Intent(SearchScreen.this, SeasonsScreen.class);
+                    in.putExtras(data);
+                    startActivity(in);
+                }
+            };
+            listView.setAdapter(itemAdapter);
+            listView.setOnItemClickListener(clickListener);
+            progress.setVisibility(View.GONE);
+        }
+    }
+
 }
