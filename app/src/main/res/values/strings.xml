@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ShowsAholic</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="search">Insert the TV Series name:</string>
+    <string name="searchBTN">SEARCH</string>
+    <string name="searchHINT">Doctor Who, Mad Men etc..</string>
+    <string name="episodeInfo">Episode Info: S01E01</string>
+
+</resources>

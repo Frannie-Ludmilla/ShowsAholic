@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView
+        android:id="@+id/searchShowTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:maxLines="2"
+        android:textIsSelectable="false"
+        android:textSize="16sp"
+        android:layout_gravity="left" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+    <TableRow>
+    <TextView
+        android:id="@+id/searchShowSeason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textIsSelectable="false"
+        android:textSize="12sp"
+        android:layout_gravity="left" />
+    <TextView
+        android:id="@+id/searchShowDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textIsSelectable="false"
+        android:textSize="12sp"
+        android:layout_gravity="right" />
+    </TableRow>
+    </TableLayout>
+</LinearLayout>
