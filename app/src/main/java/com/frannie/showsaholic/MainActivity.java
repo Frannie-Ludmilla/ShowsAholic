@@ -28,6 +28,8 @@ public class MainActivity extends Activity {
                 data.putString("selectedSeries", selectedSeries);
                 Intent in = new Intent(MainActivity.this, SearchScreen.class);
                 in.putExtras(data);*/
+                selectedSeries= selectedSeries.trim();
+                selectedSeries = selectedSeries.replaceAll(" ", "%20");
                 Intent in = new Intent(MainActivity.this, SearchScreen.class);
                 in.putExtra("selectedSeries",selectedSeries);
                 startActivity(in);
