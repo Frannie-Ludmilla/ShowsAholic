@@ -44,6 +44,16 @@ public class EpisodeItem implements Parcelable{
         return newItem;
     }
 
+    public String toString(){
+        return "Season: "+season
+                +" episode: "+ epnum
+                +" no. in season "+ seasonnum
+                +" airdate "+ airdate
+                +" url "+link
+                +" title "+ title
+                +"screencap "+screencap +"\n";
+    }
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         public EpisodeItem createFromParcel(Parcel in){
             return readFromParcel(in);

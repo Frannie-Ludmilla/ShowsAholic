@@ -9,10 +9,13 @@ import java.util.List;
 public class Group {
 
     public String string;
-    public final List<String> children = new ArrayList<String>();
+    //public final List<String> children = new ArrayList<String>();
+    public List<EpisodeItem> children;
 
     public Group(String string) {
-        this.string = string;
+        this.string = new String(string);
     }
+
+
 
 }

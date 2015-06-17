@@ -7,8 +7,10 @@ package com.frannie.showsaholic;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +23,18 @@ import android.widget.Toast;
 
 public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
 
-    private final SparseArray<Group> groups;
+    private SparseArray<Group> groups;
     public LayoutInflater inflater;
     public Activity activity;
+    public Context ctx;
 
     public SeriesEpisodesAdapter(Activity act, SparseArray<Group> groups) {
         activity = act;
         this.groups = groups;
         inflater = act.getLayoutInflater();
+        Log.v("AdapterSizeGroup",""+groups.size() );
     }
+
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
@@ -44,13 +49,13 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        final String children = (String) getChild(groupPosition, childPosition);
+        final EpisodeItem children = (EpisodeItem) getChild(groupPosition, childPosition);
         TextView text = null;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.expandablelistdetail_episodes, null);
         }
         text = (TextView) convertView.findViewById(R.id.textSeasonEpisode);
-        text.setText(children);
+        text.setText(children.seasonnum+" - "+children.title);
         convertView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +66,7 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
                 //Intent in = new Intent(this.getActivity(), EpisodeScreen.class);
                 //in.putExtras(data);
                 //startActivity(in);
-                Toast.makeText(activity, children,
+                Toast.makeText(activity, children.seasonnum+" - "+children.title,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -105,6 +110,8 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.expandablelist_row, null);
         }
         Group group = (Group) getGroup(groupPosition);
+        if(group==null)
+            Log.e("ERROR", "Group empty");
         ((CheckedTextView) convertView).setText(group.string);
         ((CheckedTextView) convertView).setChecked(isExpanded);
         return convertView;

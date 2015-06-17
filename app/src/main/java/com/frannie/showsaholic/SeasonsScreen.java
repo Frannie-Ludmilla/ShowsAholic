@@ -29,9 +29,10 @@ import android.widget.ProgressBar;
  */
 public class SeasonsScreen extends Activity {
     // more efficient than HashMap for mapping integers to objects
-    SparseArray<Group> groups = new SparseArray<Group>();
-    ProgressBar progress;
+    SparseArray<Group> groups;
+    public ProgressBar progress;
     ExpandableListView listView;
+    SeriesEpisodesAdapter adapter;
     Context ctx;
     protected String URL_SEARCH= "http://services.tvrage.com/feeds/full_show_info.php?sid=";
     protected URL myUrl;
@@ -40,6 +41,9 @@ public class SeasonsScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.expandablelistseasons);
+        progress=(ProgressBar)this.findViewById(R.id.progressbar_loading_seasons);
+        listView = (ExpandableListView)this.findViewById(R.id.listSeasonsExpandable);
+        ctx=this;
 
         //Retrieve the data related to the previously selected show
         SearchItem selectedShow;
@@ -58,26 +62,21 @@ public class SeasonsScreen extends Activity {
 
         try {
             myUrl=new URL(URL_SEARCH + selectedShow.showID);
-            new HttpGetTask().execute();
+            new HttpGetTask(this).execute();
         }
         catch (Exception e){
             Log.e("Error:",e.toString());
         }
 
 
-        createData();
-        progress=(ProgressBar)this.findViewById(R.id.progressbar_loading_seasons);
-        ExpandableListView listView = (ExpandableListView)findViewById(R.id.listSeasonsExpandable);
-        ctx=this;
-        SeriesEpisodesAdapter adapter = new SeriesEpisodesAdapter(this, groups);
-        listView.setAdapter(adapter);
+        //createData();
     }
 
     public void createData() {
         for (int j = 0; j < 5; j++) {
             Group group = new Group("Test " + j);
             for (int i = 0; i < 5; i++) {
-                group.children.add("Sub Item" + i);
+               // group.children.add(i);
             }
             groups.append(j, group);
         }
@@ -85,14 +84,20 @@ public class SeasonsScreen extends Activity {
 
     //Class for Asking the retrieval of the
 
-    private class HttpGetTask extends AsyncTask<Void, Void, String> {
+    class HttpGetTask extends AsyncTask<Void, Void, String> {
 
-    HttpURLConnection urlConnection;
+        HttpURLConnection urlConnection;
+        public Activity callerActivity;
 
-    @Override
-    protected void onPreExecute() {
-        progress.setVisibility(View.VISIBLE);
-    }
+
+        @Override
+        protected void onPreExecute() {
+            progress.setVisibility(View.VISIBLE);
+        }
+
+        public HttpGetTask(Activity a){
+            this.callerActivity = a;
+        }
 
 
     @Override
@@ -136,9 +141,19 @@ public class SeasonsScreen extends Activity {
     @Override
     protected void onPostExecute(String result) {
         //Retrieve the SearchItem[] from the XMLParser and the result
-        Log.v("Result_PE:",result);
-        SearchRespParser myXMLparser= new SearchRespParser();
+        Log.v("Result_PE:", result);
+        SeasonParser myXMLparser= new SeasonParser();
         InputStream in= new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+        try{
+            groups= myXMLparser.parse(in);
+        }catch (Exception e){
+            Log.e("OnPostExecute",e.toString());
+        }
+        adapter= new SeriesEpisodesAdapter(callerActivity, groups);
+        listView.setAdapter(adapter);
+        progress.setVisibility(View.GONE);
+        Log.v("SizeGroups:",""+groups.size());
+
     /*
         try {
             listData = (SearchItem[])myXMLparser.parse(in);
@@ -166,7 +181,7 @@ public class SeasonsScreen extends Activity {
         };
         listView.setAdapter(itemAdapter);
         listView.setOnItemClickListener(clickListener);
-        progress.setVisibility(View.GONE);*/
+        */
     }
 }
 

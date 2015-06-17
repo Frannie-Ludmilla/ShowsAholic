@@ -8,6 +8,4 @@
     android:gravity="left"
     android:paddingLeft="32dp"
     android:paddingTop="8dp"
-    android:text="Test"
-    android:textSize="14sp"
     android:textStyle="bold" />
