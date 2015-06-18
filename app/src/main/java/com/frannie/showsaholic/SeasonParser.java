@@ -41,6 +41,7 @@ public class SeasonParser {
         String TITLETAG= "title";
         String LINKTAG= "link";
         String SCREENCAPTAG= "screencap";
+        String EPISODETAG= "episode";
 
         public SparseArray<Group> parse(InputStream inputStream) throws XmlPullParserException, IOException {
             try {
@@ -68,6 +69,8 @@ public class SeasonParser {
             String airdate= null;
             String screencap=null;
             String imgUrl=null;
+            boolean hasScreencapTag=true;
+            EpisodeItem item;
 
             //List<SearchItem> items = new ArrayList<SearchItem>();
 
@@ -89,7 +92,7 @@ public class SeasonParser {
                         groups.append(numSeason-1,current_group);
                         }
                     ++numSeason;
-                    String namegroup = "Season num: " + numSeason;
+                    String namegroup = "Season: " + numSeason;
                     Group gr = new Group(namegroup);
                     gr.children = new ArrayList<EpisodeItem>();
                     currentList = gr.children;
@@ -106,31 +109,55 @@ public class SeasonParser {
                     title = readTag(parser,TITLETAG);
                 }else if (name.equals(SCREENCAPTAG)) {
                     screencap = readTag(parser,SCREENCAPTAG);
+                }else if(name.equals(EPISODETAG)){
+                    if(current_group.children.isEmpty()&& epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null)
+                        hasScreencapTag=false;
                 }
 
-                if (epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null) {
-                    if(screencap==null){
-                        if(imgUrl!=null)
-                            screencap=imgUrl;
+                if(hasScreencapTag==true){
+                    if (epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null && screencap!=null) {
+                         item= new EpisodeItem();
+                        item.season = "" + numSeason;
+                        item.epnum = epnum;
+                        item.seasonnum = seasonnum;
+                        item.airdate = airdate;
+                        item.link = link;
+                        item.title = title;
+                        item.screencap = screencap;
+                        Log.v("EpisodeItem", item.toString());
+                        Log.v("Season", ""+numSeason);
+                        if(currentList==null)
+                            Log.v("currentList: ","null");
+                        if(current_group==null)
+                            Log.v("current_group: ", "null");
+                        currentList.add(item);
+
+                        epnum=seasonnum=airdate=link=title=screencap=null;
                     }
-                    EpisodeItem item= new EpisodeItem();
-                    item.season=""+numSeason;
-                    item.epnum= epnum;
-                    item.seasonnum= seasonnum;
-                    item.airdate=airdate;
-                    item.link=link;
-                    item.title=title;
-                    item.screencap=screencap;
-                    Log.v("EpisodeItem", item.toString());
-                    Log.v("Season", ""+numSeason);
-                    if(currentList==null)
-                        Log.v("currentList: ","null");
-                    if(current_group==null)
-                        Log.v("current_group: ", "null");
-                    currentList.add(item);
-
-                    epnum=seasonnum=airdate=link=title=screencap=null;
                 }
+                else if(hasScreencapTag==false){
+                    if(epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null){
+                        item= new EpisodeItem();
+                        item.season = "" + numSeason;
+                        item.epnum = epnum;
+                        item.seasonnum = seasonnum;
+                        item.airdate = airdate;
+                        item.link = link;
+                        item.title = title;
+                        item.screencap= imgUrl;
+
+                        Log.v("EpisodeItem", item.toString());
+                        Log.v("Season", ""+numSeason);
+                        if(currentList==null)
+                            Log.v("currentList: ","null");
+                        if(current_group==null)
+                            Log.v("current_group: ", "null");
+                        currentList.add(item);
+
+                        epnum=seasonnum=airdate=link=title=screencap=null;
+                    }
+                }
+
             }
             groups.append(numSeason-1,current_group);
             Log.v("Season retrieved:", ""+numSeason);
@@ -151,12 +178,6 @@ public class SeasonParser {
             return img;
         }
 
-        private String readSeason(XmlPullParser parser) throws XmlPullParserException, IOException {
-            parser.require(XmlPullParser.START_TAG, ns, "seasons");
-            String seasons= readText(parser);
-            parser.require(XmlPullParser.END_TAG, ns, "seasons");
-            return seasons;
-        }
 
         private String readTag(XmlPullParser parser, String tag) throws XmlPullParserException, IOException {
             parser.require(XmlPullParser.START_TAG, ns, tag);
@@ -165,19 +186,7 @@ public class SeasonParser {
             return text;
         }
 
-        private String readTitle(XmlPullParser parser) throws XmlPullParserException, IOException {
-            parser.require(XmlPullParser.START_TAG, ns, "name");
-            String title = readText(parser);
-            parser.require(XmlPullParser.END_TAG, ns, "name");
-            return title;
-        }
 
-        private String readShowID(XmlPullParser parser) throws XmlPullParserException, IOException {
-            parser.require(XmlPullParser.START_TAG, ns, "showid");
-            String showId = readText(parser);
-            parser.require(XmlPullParser.END_TAG, ns, "showid");
-            return showId;
-        }
 
         // For the tags title and link, extract their text values.
         private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {

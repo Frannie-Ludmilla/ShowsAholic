@@ -1,75 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="8.5"
-    >
-    <FrameLayout
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:padding="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content">
-        <ImageView
-            android:layout_height="wrap_content"
+        android:weightSum="15"
+        >
+        <ProgressBar
+            style="@style/ProgressBar.Spinner.Indeterminate.Large"
+            android:layout_centerInParent="true"
+            android:id="@+id/progressbar_loading_episode"
+            android:visibility="gone"
             android:layout_width="wrap_content"
-            android:id="@+id/imageEpisode"
-            android:src="@drawable/tvstatic"
+            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:padding="10dp"
+            android:layout_width="match_parent">
+            <com.android.volley.toolbox.NetworkImageView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/imageEpisode"
+                android:layout_gravity="center_horizontal"
+                />
+        </FrameLayout>
+        <TextView
+            android:layout_weight="2"
+            android:id="@+id/EpisodeTVInfo"
+            android:text="@string/episodeInfo"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="false"
+            android:textAlignment="center"
+            android:gravity="fill_vertical"
+            android:layout_marginTop="5dp"
+            android:fontFamily="sans-serif-bold-italic"
+            android:textStyle="bold">
+        </TextView>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/TitleEpisodeTV"
+            android:text="Title: "
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="false"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"></TextView>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/NumEpisodeTV"
+            android:text="Episode Number: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="false"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"></TextView>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/AirDateEpisodeTV"
+            android:text="Airdate: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:elegantTextHeight="false"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"></TextView>
+        <TextView
+            android:layout_weight="3"
+            android:id="@+id/SynopsisEpisodeTV"
+            android:text="Synopsis: "
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="false"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"></TextView>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/URLepisodeTV"
+            android:textSize="18sp"
+            android:text="For more info: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="false"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"></TextView>
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to Google calendar"
+            android:id="@+id/button2GoogleCal"
             android:layout_gravity="center_horizontal"
-            />
-    </FrameLayout>
-    <TextView
-        android:layout_weight="2"
-        android:text="@string/episodeInfo"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elegantTextHeight="false"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:gravity="fill_vertical"
-        ></TextView>
-    <TextView
-        android:layout_weight="1"
-        android:id="@+id/TitleEpisodeTV"
-        android:text="Title: "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elegantTextHeight="false"
-        android:textSize="18sp"
-        ></TextView>
-    <TextView
-        android:layout_weight="1"
-        android:id="@+id/NumEpisodeTV"
-        android:text="Episode Number: "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elegantTextHeight="false"
-        android:textSize="18sp"
-        ></TextView>
-    <TextView
-        android:layout_weight="1"
-        android:id="@+id/AirDateEpisodeTV"
-        android:text="Airdate: "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elegantTextHeight="false"
-        android:textSize="18sp"
-        ></TextView>
-    <TextView
-        android:layout_weight="1"
-        android:id="@+id/URLepisodeTV"
-        android:text="For more info: "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elegantTextHeight="false"
-        android:textSize="18sp"
-        ></TextView>
-    <Button
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add to Google calendar"
-        android:id="@+id/button2GoogleCal"
-        android:layout_gravity="center_horizontal" />
+            android:layout_marginTop="16dp" />
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

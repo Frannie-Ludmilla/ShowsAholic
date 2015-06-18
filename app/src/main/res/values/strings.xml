@@ -8,7 +8,7 @@
     <string name="searchBTN">SEARCH</string>
     <string name="searchHINT">Doctor Who, Mad Men etc..</string>
     <string name="episodeInfo">Episode Info: S01E01</string>
-    <string name="seasonInfo">No. of seasons : </string>
-    <string name="yearInfo">Year :  </string>
+    <string name="seasonInfo">No. of seasons :  </string>
+    <string name="yearInfo">Year :   </string>
 
 </resources>

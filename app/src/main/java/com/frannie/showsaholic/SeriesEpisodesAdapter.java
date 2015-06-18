@@ -20,6 +20,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.Intent;
 
 public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
 
@@ -30,6 +32,7 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
 
     public SeriesEpisodesAdapter(Activity act, SparseArray<Group> groups) {
         activity = act;
+        ctx= act.getApplicationContext();
         this.groups = groups;
         inflater = act.getLayoutInflater();
         Log.v("AdapterSizeGroup",""+groups.size() );
@@ -60,14 +63,17 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 //@TODO: pass a Parcelable Episode Info
+
+
                 Bundle data = new Bundle();
-                EpisodeItem newItem= new EpisodeItem();
+                EpisodeItem newItem= children;
                 data.putParcelable("current_ep", newItem);
-                //Intent in = new Intent(this.getActivity(), EpisodeScreen.class);
-                //in.putExtras(data);
-                //startActivity(in);
+                Intent in = new Intent(activity, EpisodeScreen.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                in.putExtras(data);
                 Toast.makeText(activity, children.seasonnum+" - "+children.title,
                         Toast.LENGTH_SHORT).show();
+                ctx.startActivity(in);
             }
         });
         return convertView;

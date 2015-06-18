@@ -4,26 +4,33 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
+    android:paddingTop="10dp">
     <TextView
         android:id="@+id/searchShowTitle"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:maxLines="2"
+        android:fontFamily="sans-serif-light"
+        android:textStyle="italic"
         android:textIsSelectable="false"
-        android:textSize="16sp"
-        android:layout_gravity="center" />
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:stretchColumns="1">
+        android:stretchColumns="1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="6dp">
     <TableRow>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:text="@string/seasonInfo"
             android:layout_gravity="left" />
         <TextView
@@ -32,14 +39,14 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="left" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:text="@string/yearInfo"
             android:layout_gravity="left" />
         <TextView
@@ -48,7 +55,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="right" />
     </TableRow>
     </TableLayout>
