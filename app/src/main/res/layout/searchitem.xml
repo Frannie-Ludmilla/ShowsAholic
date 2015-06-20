@@ -31,6 +31,8 @@
             android:maxLines="1"
             android:textIsSelectable="false"
             android:textSize="14sp"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="bold"
             android:text="@string/seasonInfo"
             android:layout_gravity="left" />
         <TextView
@@ -39,6 +41,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="14sp"
             android:layout_gravity="left" />
         <TextView
@@ -46,6 +49,8 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:textIsSelectable="false"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="bold"
             android:textSize="14sp"
             android:text="@string/yearInfo"
             android:layout_gravity="left" />
@@ -54,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:fontFamily="sans-serif-condensed"
             android:textIsSelectable="false"
             android:textSize="14sp"
             android:layout_gravity="right" />

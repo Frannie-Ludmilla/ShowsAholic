@@ -92,7 +92,7 @@ public class SeasonParser {
                         groups.append(numSeason-1,current_group);
                         }
                     ++numSeason;
-                    String namegroup = "Season: " + numSeason;
+                    String namegroup = "SEASON " + numSeason;
                     Group gr = new Group(namegroup);
                     gr.children = new ArrayList<EpisodeItem>();
                     currentList = gr.children;
@@ -111,6 +111,8 @@ public class SeasonParser {
                     screencap = readTag(parser,SCREENCAPTAG);
                 }else if(name.equals(EPISODETAG)){
                     if(current_group.children.isEmpty()&& epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null)
+                        hasScreencapTag=false;
+                    else if(epnum!=null && seasonnum != null && airdate!=null && link != null && title!=null)
                         hasScreencapTag=false;
                 }
 

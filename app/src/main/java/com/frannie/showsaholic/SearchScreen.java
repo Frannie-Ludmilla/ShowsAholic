@@ -81,7 +81,7 @@ public class SearchScreen extends Activity {
 
         try {
             myUrl=new URL(URL_SEARCH + searchedShow);
-            new HttpGetTask().execute();
+            new HttpGetTask(this).execute();
         }
         catch (Exception e){
             Log.e("Error:",e.toString());
@@ -112,6 +112,11 @@ public class SearchScreen extends Activity {
     private class HttpGetTask extends AsyncTask<Void, Void, String> {
 
         HttpURLConnection urlConnection;
+        Activity callerActivity;
+
+        public HttpGetTask(Activity a){
+            this.callerActivity = a;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -159,7 +164,14 @@ public class SearchScreen extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
+
             //Retrieve the SearchItem[] from the XMLParser and the result
+            if(result==null){
+                Toast.makeText(callerActivity, "Possible connectivity problem. Try again later or with another search",
+                        Toast.LENGTH_LONG).show();
+                callerActivity.finish();
+                return;
+            }
             Log.v("Result_PE:",result);
             SearchRespParser myXMLparser= new SearchRespParser();
             InputStream in= new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
@@ -174,23 +186,31 @@ public class SearchScreen extends Activity {
                 }
             }
             //Inflate and set the elements of the views: ARRAYADAPTER
-            if(listData==null) Log.e("listdata", "null");
-            SearchAdapter itemAdapter = new SearchAdapter(ctx, R.layout.searchitem, listData);
-            AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter, View view,
-                                        int position, long id) {
-                    SearchItem searchedIt = (SearchItem) adapter.getItemAtPosition(position);
-                    Bundle data = new Bundle();
-                    data.putParcelable("selectedShow", searchedIt);
-                    Intent in = new Intent(SearchScreen.this, SeasonsScreen.class);
-                    in.putExtras(data);
-                    startActivity(in);
-                }
-            };
-            listView.setAdapter(itemAdapter);
-            listView.setOnItemClickListener(clickListener);
-            progress.setVisibility(View.GONE);
+            if(listData==null || listData.length==0) {
+                Log.e("listdata", "null");
+                Toast.makeText(callerActivity, "There are no shows for the given name",
+                        Toast.LENGTH_LONG).show();
+                callerActivity.finish();
+                return;
+            }
+            else{
+                SearchAdapter itemAdapter = new SearchAdapter(ctx, R.layout.searchitem, listData);
+                AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapter, View view,
+                                            int position, long id) {
+                        SearchItem searchedIt = (SearchItem) adapter.getItemAtPosition(position);
+                        Bundle data = new Bundle();
+                        data.putParcelable("selectedShow", searchedIt);
+                        Intent in = new Intent(SearchScreen.this, SeasonsScreen.class);
+                        in.putExtras(data);
+                        startActivity(in);
+                    }
+                };
+                listView.setAdapter(itemAdapter);
+                listView.setOnItemClickListener(clickListener);
+                progress.setVisibility(View.GONE);
+            }
         }
     }
 

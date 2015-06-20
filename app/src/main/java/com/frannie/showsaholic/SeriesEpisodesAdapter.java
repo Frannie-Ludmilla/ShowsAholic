@@ -116,8 +116,11 @@ public class SeriesEpisodesAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.expandablelist_row, null);
         }
         Group group = (Group) getGroup(groupPosition);
-        if(group==null)
+        if(group==null){
             Log.e("ERROR", "Group empty");
+
+
+        }
         ((CheckedTextView) convertView).setText(group.string);
         ((CheckedTextView) convertView).setChecked(isExpanded);
         return convertView;

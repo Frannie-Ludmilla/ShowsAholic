@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 /**
  * Created by Francesca on 15/06/2015.
@@ -41,6 +43,7 @@ public class SeasonsScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.expandablelistseasons);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         progress=(ProgressBar)this.findViewById(R.id.progressbar_loading_seasons);
         listView = (ExpandableListView)this.findViewById(R.id.listSeasonsExpandable);
         ctx=this;
@@ -88,7 +91,7 @@ public class SeasonsScreen extends Activity {
 
         HttpURLConnection urlConnection;
         public Activity callerActivity;
-
+        int numTry=0;
 
         @Override
         protected void onPreExecute() {
@@ -141,18 +144,36 @@ public class SeasonsScreen extends Activity {
     @Override
     protected void onPostExecute(String result) {
         //Retrieve the SearchItem[] from the XMLParser and the result
-        Log.v("Result_PE:", result);
-        SeasonParser myXMLparser= new SeasonParser();
-        InputStream in= new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
-        try{
-            groups= myXMLparser.parse(in);
-        }catch (Exception e){
-            Log.e("OnPostExecute",e.toString());
+        if(result==null&&numTry<3){
+            numTry++;
+            new HttpGetTask(callerActivity).execute();
         }
-        adapter= new SeriesEpisodesAdapter(callerActivity, groups);
-        listView.setAdapter(adapter);
-        progress.setVisibility(View.GONE);
-        Log.v("SizeGroups:",""+groups.size());
+        else {
+            Log.v("Result_PE:", result);
+            SeasonParser myXMLparser = new SeasonParser();
+            InputStream in = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+            try {
+                groups = myXMLparser.parse(in);
+            } catch (Exception e) {
+                Log.e("OnPostExecute", e.toString());
+            }
+            Group group = (Group) (groups.get(0));
+            if(group==null){
+                Log.e("ERROR", "Group empty pt1");
+                Toast.makeText(this.callerActivity, "Cannot retrieve the episode list for this show",
+                        Toast.LENGTH_LONG).show();
+                this.callerActivity.finish();
+                return;
+
+            }
+            else{
+                Log.e("ERROR", "Group emptyp2: following code!!");
+                adapter = new SeriesEpisodesAdapter(callerActivity, groups);
+                listView.setAdapter(adapter);
+                progress.setVisibility(View.GONE);
+                Log.v("SizeGroups:", "" + groups.size());
+            }
+        }
 
     /*
         try {
