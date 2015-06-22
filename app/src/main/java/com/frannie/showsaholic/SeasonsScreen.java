@@ -14,8 +14,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -29,13 +32,14 @@ import android.widget.Toast;
 /**
  * Created by Francesca on 15/06/2015.
  */
-public class SeasonsScreen extends Activity {
+public class SeasonsScreen extends AppCompatActivity {
     // more efficient than HashMap for mapping integers to objects
-    SparseArray<Group> groups;
+    protected SparseArray<Group> groups;
     public ProgressBar progress;
-    ExpandableListView listView;
-    SeriesEpisodesAdapter adapter;
-    Context ctx;
+    protected ExpandableListView listView;
+    protected SeriesEpisodesAdapter adapter;
+    protected Toolbar toolbar;
+    protected Context ctx;
     protected String URL_SEARCH= "http://services.tvrage.com/feeds/full_show_info.php?sid=";
     protected URL myUrl;
 
@@ -70,6 +74,22 @@ public class SeasonsScreen extends Activity {
         catch (Exception e){
             Log.e("Error:",e.toString());
         }
+
+        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar = (Toolbar) findViewById(R.id.toolbarSeason);
+        toolbar.setLogo(R.drawable.logotitle_small);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.back);
+        //upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+
+        toolbar.setNavigationIcon(upArrow);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                return;
+            }
+        });
 
 
         //createData();
@@ -157,6 +177,13 @@ public class SeasonsScreen extends Activity {
             } catch (Exception e) {
                 Log.e("OnPostExecute", e.toString());
             }
+            if(groups==null){
+                Toast.makeText(this.callerActivity, "Cannot retrieve the episode list for this show",
+                        Toast.LENGTH_LONG).show();
+                this.callerActivity.finish();
+                return;
+            }
+
             Group group = (Group) (groups.get(0));
             if(group==null){
                 Log.e("ERROR", "Group empty pt1");

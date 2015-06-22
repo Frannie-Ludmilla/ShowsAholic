@@ -3,11 +3,18 @@ package com.frannie.showsaholic;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.text.format.Time;
 import android.util.Log;
@@ -17,8 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -40,7 +47,7 @@ import java.util.Calendar;
 /**
  * Created by Francesca on 15/06/2015.
  */
-public class EpisodeScreen extends Activity {
+public class EpisodeScreen extends AppCompatActivity {
 
     protected URL episodeURL;
     protected String episodeSUrl;
@@ -51,6 +58,7 @@ public class EpisodeScreen extends Activity {
     protected TextView airdate_tv;
     protected TextView synopsis_tv;
     protected TextView info_tv;
+    protected Toolbar toolbar;
     protected EpisodeItem selectedEpisode;
     protected NetworkImageView imgFromUrl;
     protected RequestQueue mRequestQueue;
@@ -147,10 +155,29 @@ public class EpisodeScreen extends Activity {
 
         info_tv.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, moreInfoEpisodeURL );
+                Intent intent = new Intent(Intent.ACTION_VIEW, moreInfoEpisodeURL);
                 startActivity(intent);
             }
         });
+
+        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar = (Toolbar) findViewById(R.id.tool_barShare);
+        toolbar.setLogo(R.drawable.logotitle_small);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.back);
+        //upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+
+        toolbar.setNavigationIcon(upArrow);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                return;
+            }
+        });
+                //abc_ic_ab_back_mtrl_am_alpha);
+       // ActionBar actionBar = getActionBar();
+       // actionBar.setDisplayHomeAsUpEnabled(true);
 
         mShareIntent = new Intent();
         mShareIntent.setAction(Intent.ACTION_SEND);
@@ -160,24 +187,39 @@ public class EpisodeScreen extends Activity {
                 ". \nYou must see it too!"));
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate menu resource file.
-        getMenuInflater().inflate(R.menu.menu_share, menu);
+        //getMenuInflater().inflate(R.menu.menu_share, menu);R.id.menu_item_share
+        toolbar.inflateMenu(R.menu.menu_share);
 
         // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.menu_item_share);
+        MenuItem item = menu.findItem(R.id.action_share);
+
+
+        //shareIcon.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        mShareActionProvider = new ShareActionProvider(this);
+            //(ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
 
         // Connect the dots: give the ShareActionProvider its Share Intent
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(mShareIntent);
         }
-
         // Return true to display menu
         return true;
+    }
+
+    public boolean onShareTargetSelected(ShareActionProvider source,
+                                         Intent intent) {
+        Toast.makeText(this, intent.getComponent().toString(),
+                Toast.LENGTH_LONG).show();
+
+        return(false);
     }
 
     // Call to update the share intent

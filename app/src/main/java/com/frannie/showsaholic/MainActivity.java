@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,9 +19,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     protected String selectedSeries;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +32,13 @@ public class MainActivity extends Activity {
         final EditText mySeries   = (EditText)findViewById(R.id.editTextMain);
         mySeries.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         mySeries.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        ActionBar actionBar = getActionBar();
+        getSupportActionBar().hide();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setLogo(R.drawable.logo);
+        //setSupportActionBar(toolbar);
+
+        //ActionBar actionBar = getActionBar();
+        //actionBar.setLogo(R.drawable.title);
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -60,8 +70,8 @@ public class MainActivity extends Activity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+
+    /*public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -75,11 +85,6 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

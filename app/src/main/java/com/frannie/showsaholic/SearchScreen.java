@@ -3,9 +3,12 @@ package com.frannie.showsaholic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Xml;
 import android.widget.AdapterView;
@@ -49,7 +52,7 @@ import java.util.List;
 /**
  * Created by Francesca on 14/06/2015.
  */
-public class SearchScreen extends Activity {
+public class SearchScreen extends AppCompatActivity{
 
 
     //protected String[] prova = new String[]{"Post 1", "Post 2", "Post 3", "Post 4", "Post 5", "Post 6"};
@@ -60,6 +63,7 @@ public class SearchScreen extends Activity {
     ProgressBar progress;
     ListView listView;
     Context ctx;
+    protected Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,21 @@ public class SearchScreen extends Activity {
         catch (Exception e){
             Log.e("Error:",e.toString());
         }
+        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar = (Toolbar) findViewById(R.id.toolbarSearch);
+        toolbar.setLogo(R.drawable.logotitle_small);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.back);
+        //upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+
+        toolbar.setNavigationIcon(upArrow);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                return;
+            }
+        });
     }
 
     //May be deleted

@@ -9,6 +9,9 @@
         android:layout_height="wrap_content"
         android:weightSum="15"
         >
+        <include
+            android:id="@+id/tool_barShare"
+            layout="@layout/toolbar_share"/>
         <ProgressBar
             style="@style/ProgressBar.Spinner.Indeterminate.Large"
             android:layout_centerInParent="true"
