@@ -23,9 +23,13 @@ public class Airdate {
     * */
     public boolean toBeAired(int today_day, int today_month ,int today_year){
 
-        if(this.year>=today_year) {
+        if(this.year>today_year)
+            return true;
+        else if(this.year==today_year){
             //Log.v("YEAR", this.year+">="+today_year);
-            if (this.month >= today_month) {
+            if (this.month > today_month)
+                return true;
+            else if(this.month== today_month){
                 //Log.v("MONTH", this.month+">="+today_month);
                 if (this.day >= today_day){
                     //Log.v("DAY", this.day+">="+today_day);

@@ -24,12 +24,13 @@ import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     protected String selectedSeries;
+    protected EditText mySeries;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
-        final EditText mySeries   = (EditText)findViewById(R.id.editTextMain);
+        mySeries   = (EditText)findViewById(R.id.editTextMain);
         mySeries.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         mySeries.setImeOptions(EditorInfo.IME_ACTION_DONE);
         getSupportActionBar().hide();
@@ -68,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        // Clear all value here
+        mySeries.getText().clear();
     }
 
 
