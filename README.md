@@ -11,3 +11,7 @@ Additional libraries used:
 -appcompat-v7 for Material Design compatibility
 
 -jsoup for HTML parsing
+
+Small demo:
+
+[[ http://quintessencebinarydust.altervista.org/ShowsAholic/insta.gif | height = 100px ]]
